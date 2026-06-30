@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="HTML変換">
+<meta name="theme-color" content="#667eea">
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="/icon.svg">
+<title>みやすいHTML変換</title>
+<script src="https://cdn.jsdelivr.net/npm/marked@9.1.6/marked.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Helvetica Neue','Noto Sans JP',sans-serif;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);min-height:100vh;min-height:100dvh;padding:20px 16px;padding-top:max(20px,env(safe-area-inset-top))}
+.wrap{max-width:680px;margin:0 auto}
+.hdr{text-align:center;padding:20px 0 18px;color:#fff}
+.hdr h1{font-size:1.55em;font-weight:800;margin-bottom:5px}
+.hdr p{font-size:.85em;opacity:.85}
+.card{background:#fff;border-radius:18px;padding:24px 20px;margin-bottom:14px;box-shadow:0 8px 32px rgba(0,0,0,.15)}
+.lbl{font-size:.73em;font-weight:700;color:#667eea;text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px}
+.tinput{width:100%;border:2px solid #e2e8f0;border-radius:10px;padding:10px 13px;font-size:.95em;font-family:inherit;color:#333;margin-bottom:16px;transition:border-color .2s}
+.tinput:focus{outline:none;border-color:#667eea}
+textarea{width:100%;min-height:180px;border:2px solid #e2e8f0;border-radius:10px;padding:12px 13px;font-size:.9em;line-height:1.65;resize:vertical;font-family:inherit;color:#333;transition:border-color .2s}
+textarea:focus{outline:none;border-color:#667eea}
+textarea::placeholder{color:#a0aec0}
+.cnt{font-size:.75em;color:#a0aec0;text-align:right;margin-top:4px;margin-bottom:14px}
+.sbtn{background:none;border:1.5px solid #667eea;color:#667eea;border-radius:8px;padding:6px 13px;font-size:.76em;cursor:pointer;font-family:inherit;font-weight:700;margin-bottom:10px;transition:background .2s}
+.sbtn:hover{background:#f0f4ff}
+.cbtn{width:100%;padding:15px;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff;border:none;border-radius:12px;font-size:1.05em;font-weight:800;cursor:pointer;letter-spacing:.04em;transition:transform .15s,box-shadow .15s;font-family:inherit}
+.cbtn:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(102,126,234,.45)}
+.cbtn:active{transform:scale(.98)}
+.cbtn:disabled{opacity:.65;cursor:not-allowed;transform:none}
+.ld{text-align:center;padding:28px 0}
+.spin{display:inline-block;width:44px;height:44px;border:4px solid #e2e8f0;border-top-color:#667eea;border-radius:50%;animation:spin .85s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.ldtxt{margin-top:14px;color:#4a5568;font-size:.9em;font-weight:500}
+.urlbox{background:linear-gradient(135deg,#e0e7ff,#f0fdf4);border:1.5px solid #c7d2fe;border-radius:10px;padding:13px 15px;margin:13px 0;word-break:break-all;font-size:.82em;font-weight:600;color:#3730a3}
+.brow{display:grid;gap:9px;margin-top:11px}
+.brow-3{grid-template-columns:1fr 1fr 1fr}
+.brow-2{grid-template-columns:1fr 1fr}
+.btn{padding:12px 5px;border:none;border-radius:10px;font-size:.83em;font-weight:700;cursor:pointer;font-family:inherit;transition:transform .1s}
+.btn:active{transform:scale(.96)}
+.btn-copy{background:#eef2ff;color:#4f46e5}
+.btn-open{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff}
+.btn-gmail{background:linear-gradient(135deg,#f093fb,#f5576c);color:#fff}
+.btn-reset{background:#f7f8fa;color:#6b7280}
+.badge{display:inline-flex;align-items:center;gap:5px;background:#f0fdf4;color:#16a34a;border:1.5px solid #bbf7d0;border-radius:20px;padding:4px 12px;font-size:.76em;font-weight:700;margin-bottom:9px}
+.phonewrap{display:flex;justify-content:center;margin-top:18px}
+.phone{width:290px;height:560px;border:7px solid #1a202c;border-radius:34px;overflow:hidden;box-shadow:0 20px 55px rgba(0,0,0,.35),inset 0 0 0 2px #2d3748;position:relative;background:#000}
+.phone::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:75px;height:20px;background:#1a202c;border-radius:0 0 13px 13px;z-index:10}
+.phone iframe{width:100%;height:100%;border:none}
+.err-box{background:#fff5f5;border:1.5px solid #fed7d7;border-radius:10px;padding:13px 15px;color:#c53030;font-size:.83em;margin:9px 0}
+.foot{text-align:center;color:rgba(255,255,255,.5);font-size:.7em;padding:14px 0 max(14px,env(safe-area-inset-bottom))}
+@media(max-width:400px){.phone{width:250px;height:490px}.brow-3{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hdr">
+    <h1>✨ みやすいHTML変換</h1>
+    <p>長文テキスト → スマホで読みやすいページに自動変換</p>
+  </div>
+
+  <div class="card" id="in-card">
+    <div class="lbl">ページタイトル</div>
+    <input type="text" class="tinput" id="title-in" placeholder="例：3歳の育児について" />
+    <div class="lbl">テキストを貼り付け</div>
+    <button class="sbtn" onclick="loadSample()">📋 サンプルで試す</button>
+    <textarea id="txt-in" placeholder="AIで調べた長文テキストをここに貼り付け&#10;&#10;## 見出し、- 箇条書き など&#10;マークダウン形式でもプレーンテキストでもOK"></textarea>
+    <div class="cnt" id="cnt">0 文字</div>
+    <button class="cbtn" id="cbtn" onclick="run()">✨ みやすいHTMLを作成する</button>
+  </div>
+
+  <div class="card" id="ld-card" style="display:none">
+    <div class="ld">
+      <div class="spin"></div>
+      <div class="ldtxt" id="ldtxt">HTMLを生成中...</div>
+    </div>
+  </div>
+
+  <div class="card" id="res-card" style="display:none">
+    <div class="badge">✓ デプロイ完了</div>
+    <div class="lbl" style="margin-top:9px">生成されたURL</div>
+    <div class="urlbox" id="urlbox"></div>
+    <div class="brow brow-3">
+      <button class="btn btn-copy" onclick="copyURL()">📋 コピー</button>
+      <button class="btn btn-open" onclick="openURL()">🔗 開く</button>
+      <button class="btn btn-gmail" onclick="openGmail()">📧 Gmail</button>
+    </div>
+    <div class="lbl" style="margin-top:20px">スマホプレビュー</div>
+    <div class="phonewrap">
+      <div class="phone">
+        <iframe id="prev" srcdoc=""></iframe>
+      </div>
+    </div>
+    <div class="brow brow-2" style="margin-top:16px">
+      <button class="btn btn-reset" onclick="reset()">↩ もう一度</button>
+    </div>
+  </div>
+
+  <div class="foot">みやすいHTML変換アプリ · Powered by Netlify</div>
+</div>
+
+<script>
+let currentURL = '';
+
+document.getElementById('txt-in').addEventListener('input', function(){
+  document.getElementById('cnt').textContent = this.value.length.toLocaleString() + ' 文字';
+});
+
+function loadSample(){
+  document.getElementById('title-in').value = '3歳の育児について';
+  const s = `## 認知発達のポイント
+
+この時期、子どもの語彙は急速に増加します。「なぜ？」「どうして？」という質問が増え、知的好奇心が旺盛になります。
+
+- 語彙が急速に増加（1日に数語のペース）
+- 「なぜ？」の質問が爆発的に増える
+- 簡単な数の概念を理解し始める
+- 色や形の認識が発達する
+
+## 身体発達のポイント
+
+運動能力が大きく伸びる時期です。全身を使った遊びを積極的に取り入れましょう。
+
+- 走る・跳ぶ・登るなどの全身運動が得意になる
+- 三輪車に乗れるようになる
+- ボタンの着脱ができ始める
+- お箸に挑戦する子も出てくる
+
+## 情緒発達のポイント
+
+自我が芽生え、感情表現が豊かになります。これは健全な発達の証です。
+
+- 感情表現が豊かになり、喜怒哀楽を強く表現する
+- 自我の主張（イヤイヤ）が強くなる
+- 友達への興味・関心が高まる
+- 簡単なルールの理解が始まる
+
+## 育児の実践ポイント
+
+> たくさん話しかけて、子どもの話をよく聞くことが最も大切です。
+
+**コミュニケーション**を重視し、「なぜ？」の質問には丁寧に答え、一緒に考える時間を作りましょう。
+
+**自立心の育成**として、「自分でやりたい」気持ちを尊重します。時間がかかっても見守り、できたことを大いに褒めましょう。
+
+## 気をつけること
+
+- メディア利用は1日1〜2時間程度に制限する
+- 規則正しい生活リズム（早寝・早起き・3食）を維持する
+- 外出時は必ず手をつなぐ`;
+  document.getElementById('txt-in').value = s;
+  document.getElementById('cnt').textContent = s.length.toLocaleString() + ' 文字';
+}
+
+async function run(){
+  const txt = document.getElementById('txt-in').value.trim();
+  const title = document.getElementById('title-in').value.trim() || 'みやすいページ';
+  if(!txt){ alert('テキストを入力してください'); return; }
+
+  document.getElementById('cbtn').disabled = true;
+  document.getElementById('in-card').style.display = 'none';
+
+  try {
+    ld('✨ HTMLを生成中...');
+    const html = makeHTML(txt, title);
+
+    ld('🚀 Netlifyにデプロイ中...');
+    const res = await fetch('/api/deploy', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({html, title})
+    });
+    if(!res.ok) throw new Error('デプロイ開始失敗 (' + res.status + ')');
+    const {deployId, siteId} = await res.json();
+
+    for(let i = 0; i < 30; i++){
+      await sleep(2000);
+      ld('⏳ サイト起動中... (' + (i+1) + '/30)');
+      const sr = await fetch(`/api/check-status?siteId=${siteId}&deployId=${deployId}`);
+      const {state, url} = await sr.json();
+      if(state === 'ready'){
+        currentURL = url;
+        noLD();
+        document.getElementById('urlbox').textContent = url;
+        document.getElementById('prev').srcdoc = html;
+        document.getElementById('res-card').style.display = 'block';
+        window.scrollTo({top:0, behavior:'smooth'});
+        return;
+      }
+      if(state === 'error') throw new Error('Netlifyデプロイエラー');
+    }
+    throw new Error('タイムアウト');
+
+  } catch(e){
+    noLD();
+    document.getElementById('in-card').style.display = 'block';
+    document.getElementById('cbtn').disabled = false;
+    const d = document.createElement('div');
+    d.className = 'card';
+    d.innerHTML = `<div class="err-box">❌ ${e.message}</div><button class="sbtn" onclick="this.parentElement.remove()">閉じる</button>`;
+    document.getElementById('in-card').after(d);
+  }
+}
+
+function ld(msg){ document.getElementById('ld-card').style.display='block'; document.getElementById('ldtxt').textContent=msg; }
+function noLD(){ document.getElementById('ld-card').style.display='none'; }
+function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
+
+function makeHTML(md, title){
+  const raw = marked.parse(md);
+  const sections = buildSections(raw);
+  return `<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>${esc(title)}</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue','Noto Sans JP',sans-serif;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);min-height:100vh;padding:16px;color:#333;line-height:1.75}
+.w{max-width:700px;margin:0 auto}
+.card{background:#fff;border-radius:16px;padding:26px 24px;margin-bottom:16px;box-shadow:0 8px 28px rgba(0,0,0,.12)}
+.tc{text-align:center;padding:32px 28px}
+h1{color:#4a5568;font-size:1.75em;border-bottom:3px solid #667eea;padding-bottom:14px;margin-bottom:10px}
+h2{color:#667eea;font-size:1.3em;margin-bottom:16px;padding-bottom:8px;border-bottom:2px solid #e0e7ff}
+h3{color:#4a5568;font-size:1.05em;margin:18px 0 10px;padding-left:10px;border-left:3px solid #667eea}
+p{margin-bottom:12px;font-size:.94em}
+ul,ol{list-style:none;padding:0;margin-bottom:12px}
+li{margin-bottom:9px;padding-left:26px;position:relative;font-size:.92em}
+li::before{content:"✓";color:#667eea;font-weight:700;position:absolute;left:0}
+ol{counter-reset:li}
+ol li::before{content:counter(li)". ";counter-increment:li}
+blockquote{background:linear-gradient(135deg,#4facfe,#00f2fe);color:#fff;padding:18px 20px;border-radius:12px;margin:14px 0;box-shadow:0 4px 14px rgba(79,172,254,.3)}
+blockquote p{margin:0;font-weight:500}
+strong{color:#7c3aed;font-weight:700}
+em{color:#667eea;font-style:normal;font-weight:600}
+code{background:#f0f4ff;color:#667eea;padding:2px 7px;border-radius:5px;font-size:.85em;border:1px solid #dde8ff}
+hr{border:none;border-top:2px dashed #e2e8f0;margin:18px 0}
+.ft{text-align:center;color:rgba(255,255,255,.55);font-size:.72em;padding:16px 0 8px}
+@media(max-width:480px){body{padding:12px}.card{padding:20px 16px}h1{font-size:1.45em}h2{font-size:1.15em}}
+</style>
+</head>
+<body><div class="w">
+${sections}
+<div class="ft">みやすいHTML変換アプリで作成</div>
+</div></body></html>`;
+}
+
+function buildSections(html){
+  const doc = new DOMParser().parseFromString('<div>'+html+'</div>','text/html');
+  const nodes = Array.from(doc.querySelector('div').childNodes).filter(n=>n.nodeType===1);
+  let out=[], buf=[];
+  nodes.forEach(n=>{
+    if(n.tagName==='H1'){
+      if(buf.length){out.push('<div class="card">'+buf.join('')+'</div>');buf=[];}
+      out.push('<div class="card tc">'+n.outerHTML+'</div>');
+    } else if(n.tagName==='H2'){
+      if(buf.length){out.push('<div class="card">'+buf.join('')+'</div>');buf=[];}
+      buf.push(n.outerHTML);
+    } else {
+      buf.push(n.outerHTML);
+    }
+  });
+  if(buf.length) out.push('<div class="card">'+buf.join('')+'</div>');
+  return out.join('\n');
+}
+
+function esc(s){ return s.replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+function copyURL(){ navigator.clipboard.writeText(currentURL).then(()=>alert('✓ コピーしました')); }
+function openURL(){ window.open(currentURL,'_blank'); }
+function openGmail(){
+  const s=encodeURIComponent('✨ みやすいHTMLページが完成しました');
+  const b=encodeURIComponent('スマホで縦スクロールして読めるページを作成しました。\n\n'+currentURL);
+  window.open('https://mail.google.com/mail/?view=cm&to=s.morichika1009@gmail.com&su='+s+'&body='+b,'_blank');
+}
+function reset(){
+  document.getElementById('txt-in').value='';
+  document.getElementById('title-in').value='';
+  document.getElementById('cnt').textContent='0 文字';
+  document.getElementById('in-card').style.display='block';
+  document.getElementById('res-card').style.display='none';
+  document.getElementById('cbtn').disabled=false;
+  currentURL='';
+}
+</script>
+</body>
+</html>
