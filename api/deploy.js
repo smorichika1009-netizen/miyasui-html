@@ -11,7 +11,10 @@ module.exports = async (req, res) => {
   if (req.method !== 'POST') return res.status(405).end('Method Not Allowed');
 
   try {
+    if (!TOKEN) return res.status(500).json({ error: 'VERCEL_TOKEN not set' });
+    if (!req.body) return res.status(500).json({ error: 'req.body is empty' });
     const { html } = req.body;
+    if (!html) return res.status(500).json({ error: 'html field missing, keys: ' + Object.keys(req.body).join(',') });
 
     const deployment = await vercelPost('/v13/deployments?teamId=team_U1FGY8ZI2R13Zz3Pv15dSYiU', {
       name: 'miyasui-page',
@@ -25,7 +28,7 @@ module.exports = async (req, res) => {
       siteUrl: `https://${deployment.url}`
     });
   } catch (e) {
-    res.status(500).json({ error: e.message });
+    res.status(500).json({ error: String(e.message || e) });
   }
 };
 
