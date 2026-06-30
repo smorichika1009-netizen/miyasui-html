@@ -11,7 +11,7 @@ module.exports = async (req, res) => {
   if (!deployId) return res.status(400).end('Missing deployId');
 
   try {
-    const deployment = await vercelGet(`/v13/deployments/${deployId}`);
+    const deployment = await vercelGet(`/v13/deployments/${deployId}?teamId=team_U1FGY8ZI2R13Zz3Pv15dSYiU`);
     const rs = deployment.readyState;
 
     let state = 'building';

@@ -13,9 +13,9 @@ module.exports = async (req, res) => {
   try {
     const { html } = req.body;
 
-    const deployment = await vercelPost('/v13/deployments', {
+    const deployment = await vercelPost('/v13/deployments?teamId=team_U1FGY8ZI2R13Zz3Pv15dSYiU', {
       name: 'miyasui-page',
-      files: [{ file: 'index.html', data: html, encoding: 'utf8' }],
+      files: [{ file: 'index.html', data: html, encoding: 'utf-8' }],
       projectSettings: { framework: null }
     });
 
