@@ -1,7 +1,7 @@
 'use strict';
 const https = require('https');
 
-const TOKEN = process.env.VERCEL_TOKEN;
+const TOKEN = (process.env.VERCEL_TOKEN || '').trim();
 
 module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');

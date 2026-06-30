@@ -100,7 +100,7 @@ textarea::placeholder{color:#a0aec0}
     </div>
   </div>
 
-  <div class="foot">みやすいHTML変換アプリ · Powered by Netlify</div>
+  <div class="foot">みやすいHTML変換アプリ · Powered by Vercel</div>
 </div>
 
 <script>
@@ -168,7 +168,7 @@ async function run(){
     ld('✨ HTMLを生成中...');
     const html = makeHTML(txt, title);
 
-    ld('🚀 Netlifyにデプロイ中...');
+    ld('🚀 Vercelにデプロイ中...');
     const res = await fetch('/api/deploy', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
@@ -191,7 +191,7 @@ async function run(){
         window.scrollTo({top:0, behavior:'smooth'});
         return;
       }
-      if(state === 'error') throw new Error('Netlifyデプロイエラー');
+      if(state === 'error') throw new Error('デプロイエラー');
     }
     throw new Error('タイムアウト');
 
