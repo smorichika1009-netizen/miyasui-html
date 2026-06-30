@@ -22,6 +22,12 @@ module.exports = async (req, res) => {
       projectSettings: { framework: null }
     });
 
+    // デプロイ保護を無効化（2段階認証なしで公開アクセス可能に）
+    await vercelPatch(`/v9/projects/miyasui-page?teamId=team_U1FGY8ZI2R13Zz3Pv15dSYiU`, {
+      ssoProtection: null,
+      passwordProtection: null
+    }).catch(() => {});
+
     res.status(200).json({
       deployId: deployment.id,
       siteId: deployment.id,
@@ -31,6 +37,29 @@ module.exports = async (req, res) => {
     res.status(500).json({ error: String(e.message || e) });
   }
 };
+
+function vercelPatch(path, data) {
+  return new Promise((resolve, reject) => {
+    const body = Buffer.from(JSON.stringify(data), 'utf-8');
+    const req = https.request({
+      hostname: 'api.vercel.com',
+      path,
+      method: 'PATCH',
+      headers: {
+        'Authorization': `Bearer ${TOKEN}`,
+        'Content-Type': 'application/json',
+        'Content-Length': body.length
+      }
+    }, (r) => {
+      const chunks = [];
+      r.on('data', c => chunks.push(c));
+      r.on('end', () => resolve(Buffer.concat(chunks).toString()));
+    });
+    req.on('error', reject);
+    req.write(body);
+    req.end();
+  });
+}
 
 function vercelPost(path, data) {
   return new Promise((resolve, reject) => {
